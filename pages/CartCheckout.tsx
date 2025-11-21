@@ -1,36 +1,167 @@
 import React, { useState } from 'react';
 import { useCartStore } from '../store';
+import { useToastStore } from '../components/Toast';
 import { Button, SectionTitle } from '../components/UI';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GeneratedImage } from '../components/GeneratedImage';
 
+interface FormErrors {
+  name?: string;
+  email?: string;
+  phone?: string;
+  city?: string;
+}
+
 const CartCheckout: React.FC = () => {
   const { items, updateQuantity, removeItem, getTotalPrice } = useCartStore();
+  const { addToast } = useToastStore();
   const [formData, setFormData] = useState({
     name: '',
+    email: '',
     city: '',
     phone: '',
-    notes: ''
+    notes: '',
+    shippingMethod: 'standard'
   });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [promoCode, setPromoCode] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discount: number } | null>(null);
+  const [promoError, setPromoError] = useState('');
+
+  const shippingOptions = {
+    standard: { label: 'Standard Delivery', price: 30, days: '2-4 business days' },
+    express: { label: 'Express Delivery', price: 60, days: '1-2 business days' },
+    pickup: { label: 'Store Pickup', price: 0, days: 'Same day in Casablanca' }
+  };
+
+  // Sample promo codes - in production, these would come from an API
+  const promoCodes = {
+    'WELCOME10': { discount: 10, type: 'percentage' as const },
+    'FIRST50': { discount: 50, type: 'fixed' as const },
+    'SUMMER15': { discount: 15, type: 'percentage' as const }
+  };
+
+  const shippingCost = shippingOptions[formData.shippingMethod as keyof typeof shippingOptions].price;
+  const subtotal = getTotalPrice();
+  const discountAmount = appliedPromo
+    ? promoCodes[appliedPromo.code as keyof typeof promoCodes].type === 'percentage'
+      ? Math.round(subtotal * (promoCodes[appliedPromo.code as keyof typeof promoCodes].discount / 100))
+      : promoCodes[appliedPromo.code as keyof typeof promoCodes].discount
+    : 0;
+  const totalWithShipping = subtotal - discountAmount + shippingCost;
+
+  const validateField = (name: string, value: string): string | undefined => {
+    switch (name) {
+      case 'name':
+        if (!value.trim()) return 'Name is required';
+        if (value.trim().length < 2) return 'Name must be at least 2 characters';
+        return undefined;
+
+      case 'email':
+        if (!value.trim()) return 'Email is required';
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) return 'Please enter a valid email';
+        return undefined;
+
+      case 'phone':
+        if (!value.trim()) return 'Phone number is required';
+        // Moroccan phone format: 06/07 XX XX XX XX
+        const phoneRegex = /^(06|07)[0-9]{8}$/;
+        const cleanPhone = value.replace(/\s/g, '');
+        if (!phoneRegex.test(cleanPhone)) return 'Phone must be 10 digits starting with 06 or 07';
+        return undefined;
+
+      case 'city':
+        if (!value.trim()) return 'City is required';
+        if (value.trim().length < 2) return 'City must be at least 2 characters';
+        return undefined;
+
+      default:
+        return undefined;
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+
+    // Validate on change if field was already touched
+    if (touched[name]) {
+      const error = validateField(name, value);
+      setErrors(prev => ({ ...prev, [name]: error }));
+    }
+  };
+
+  const handleBlur = (name: string) => {
+    setTouched(prev => ({ ...prev, [name]: true }));
+    const error = validateField(name, formData[name as keyof typeof formData]);
+    setErrors(prev => ({ ...prev, [name]: error }));
+  };
+
+  const handleApplyPromo = () => {
+    const upperCode = promoCode.trim().toUpperCase();
+
+    if (!upperCode) {
+      setPromoError('Please enter a promo code');
+      return;
+    }
+
+    if (upperCode in promoCodes) {
+      const promo = promoCodes[upperCode as keyof typeof promoCodes];
+      setAppliedPromo({ code: upperCode, discount: promo.discount });
+      setPromoError('');
+      addToast(`Promo code applied! ${promo.type === 'percentage' ? `${promo.discount}%` : `${promo.discount} MAD`} off`, 'success');
+    } else {
+      setPromoError('Invalid promo code');
+      setAppliedPromo(null);
+      addToast('Invalid promo code', 'error');
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setAppliedPromo(null);
+    setPromoCode('');
+    setPromoError('');
+    addToast('Promo code removed', 'success');
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {
+      name: validateField('name', formData.name),
+      email: validateField('email', formData.email),
+      phone: validateField('phone', formData.phone),
+      city: validateField('city', formData.city)
+    };
+
+    setErrors(newErrors);
+    setTouched({ name: true, email: true, phone: true, city: true });
+
+    return !Object.values(newErrors).some(error => error !== undefined);
   };
 
   const handleWhatsAppOrder = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const itemsList = items.map(item => 
+
+    if (!validateForm()) {
+      addToast('Please fix the errors in the form', 'error');
+      return;
+    }
+
+    const itemsList = items.map(item =>
       `- ${item.quantity}x ${item.name} (${item.size}) - ${item.price * item.quantity} MAD`
     ).join('\n');
 
-    const message = `Hi Scentoria 🌿%0A%0AI'd like to order:%0A${itemsList}%0A%0ASubtotal: ${getTotalPrice()} MAD%0A%0A---%0ADetails:%0AName: ${formData.name}%0APhone: ${formData.phone}%0ACity: ${formData.city}%0ANotes: ${formData.notes}`;
+    const selectedShipping = shippingOptions[formData.shippingMethod as keyof typeof shippingOptions];
+
+    const discountLine = appliedPromo ? `%0ADiscount (${appliedPromo.code}): -${discountAmount} MAD` : '';
+    const message = `Hi Scentoria 🌿%0A%0AI'd like to order:%0A${itemsList}%0A%0ASubtotal: ${subtotal} MAD${discountLine}%0AShipping (${selectedShipping.label}): ${shippingCost} MAD%0ATotal: ${totalWithShipping} MAD%0A%0A---%0ADetails:%0AName: ${formData.name}%0AEmail: ${formData.email}%0APhone: ${formData.phone}%0ACity: ${formData.city}%0AShipping: ${selectedShipping.label} (${selectedShipping.days})%0ANotes: ${formData.notes || 'None'}`;
 
     // Replace with actual number
-    const phoneNumber = "212600000000"; 
+    const phoneNumber = "212600000000";
     window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    addToast('Opening WhatsApp...', 'success');
   };
 
   if (items.length === 0) {
@@ -97,47 +228,145 @@ const CartCheckout: React.FC = () => {
             
             <form onSubmit={handleWhatsAppOrder} className="space-y-4">
               <div>
-                <label className="block text-xs uppercase font-bold text-cedar/70 mb-1">Full Name</label>
-                <input 
-                  required
-                  type="text" 
+                <label htmlFor="name" className="block text-xs uppercase font-bold text-cedar/70 mb-1">
+                  Full Name *
+                </label>
+                <input
+                  id="name"
+                  type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full bg-sand/20 border border-cedar/20 p-3 rounded-sm focus:outline-none focus:border-cedar transition-colors"
+                  onBlur={() => handleBlur('name')}
+                  className={`w-full bg-sand/20 border p-3 rounded-sm focus:outline-none transition-colors ${
+                    errors.name && touched.name
+                      ? 'border-red-400 focus:border-red-500'
+                      : 'border-cedar/20 focus:border-cedar'
+                  }`}
                   placeholder="e.g. Amina Benali"
                 />
+                {errors.name && touched.name && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle size={12} /> {errors.name}
+                  </p>
+                )}
               </div>
-              
+
               <div>
-                <label className="block text-xs uppercase font-bold text-cedar/70 mb-1">Phone Number</label>
-                <input 
-                  required
-                  type="tel" 
+                <label htmlFor="email" className="block text-xs uppercase font-bold text-cedar/70 mb-1">
+                  Email Address *
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  onBlur={() => handleBlur('email')}
+                  className={`w-full bg-sand/20 border p-3 rounded-sm focus:outline-none transition-colors ${
+                    errors.email && touched.email
+                      ? 'border-red-400 focus:border-red-500'
+                      : 'border-cedar/20 focus:border-cedar'
+                  }`}
+                  placeholder="e.g. amina@example.com"
+                />
+                {errors.email && touched.email && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle size={12} /> {errors.email}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-xs uppercase font-bold text-cedar/70 mb-1">
+                  Phone Number *
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full bg-sand/20 border border-cedar/20 p-3 rounded-sm focus:outline-none focus:border-cedar transition-colors"
-                  placeholder="e.g. 06 00 00 00 00"
+                  onBlur={() => handleBlur('phone')}
+                  className={`w-full bg-sand/20 border p-3 rounded-sm focus:outline-none transition-colors ${
+                    errors.phone && touched.phone
+                      ? 'border-red-400 focus:border-red-500'
+                      : 'border-cedar/20 focus:border-cedar'
+                  }`}
+                  placeholder="e.g. 0600000000"
                 />
+                {errors.phone && touched.phone && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle size={12} /> {errors.phone}
+                  </p>
+                )}
               </div>
 
               <div>
-                <label className="block text-xs uppercase font-bold text-cedar/70 mb-1">City / Area</label>
-                <input 
-                  required
-                  type="text" 
+                <label htmlFor="city" className="block text-xs uppercase font-bold text-cedar/70 mb-1">
+                  City / Area *
+                </label>
+                <input
+                  id="city"
+                  type="text"
                   name="city"
                   value={formData.city}
                   onChange={handleInputChange}
-                  className="w-full bg-sand/20 border border-cedar/20 p-3 rounded-sm focus:outline-none focus:border-cedar transition-colors"
+                  onBlur={() => handleBlur('city')}
+                  className={`w-full bg-sand/20 border p-3 rounded-sm focus:outline-none transition-colors ${
+                    errors.city && touched.city
+                      ? 'border-red-400 focus:border-red-500'
+                      : 'border-cedar/20 focus:border-cedar'
+                  }`}
                   placeholder="e.g. Casablanca, Maarif"
                 />
+                {errors.city && touched.city && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle size={12} /> {errors.city}
+                  </p>
+                )}
               </div>
 
               <div>
-                <label className="block text-xs uppercase font-bold text-cedar/70 mb-1">Special Requests</label>
-                <textarea 
+                <label className="block text-xs uppercase font-bold text-cedar/70 mb-2">Shipping Method *</label>
+                <div className="space-y-2">
+                  {Object.entries(shippingOptions).map(([key, option]) => (
+                    <label
+                      key={key}
+                      className={`flex items-center justify-between p-3 border rounded-sm cursor-pointer transition-all ${
+                        formData.shippingMethod === key
+                          ? 'border-cedar bg-cedar/5'
+                          : 'border-cedar/20 hover:border-cedar/40'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="radio"
+                          name="shippingMethod"
+                          value={key}
+                          checked={formData.shippingMethod === key}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 text-cedar focus:ring-cedar/20"
+                        />
+                        <div>
+                          <p className="font-medium text-sm">{option.label}</p>
+                          <p className="text-xs text-cedar/60">{option.days}</p>
+                        </div>
+                      </div>
+                      <span className="font-bold text-sm">
+                        {option.price === 0 ? 'Free' : `${option.price} MAD`}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="notes" className="block text-xs uppercase font-bold text-cedar/70 mb-1">
+                  Special Requests
+                </label>
+                <textarea
+                  id="notes"
                   name="notes"
                   value={formData.notes}
                   onChange={handleInputChange}
@@ -146,12 +375,81 @@ const CartCheckout: React.FC = () => {
                 />
               </div>
 
-              <div className="border-t border-cedar/10 pt-4 mt-2 mb-6">
-                <div className="flex justify-between text-lg font-serif font-bold text-midnight">
-                  <span>Total</span>
-                  <span>{getTotalPrice()} MAD</span>
+              <div className="border-t border-cedar/10 pt-4 mt-2">
+                {/* Promo Code Field */}
+                <div className="mb-4">
+                  <label className="block text-xs uppercase font-bold text-cedar/70 mb-2">Promo Code</label>
+                  {appliedPromo ? (
+                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="text-green-700 font-bold text-sm">{appliedPromo.code}</span>
+                        <span className="text-green-600 text-xs">applied</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemovePromo}
+                        className="text-xs text-red-500 hover:text-red-700 underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={promoCode}
+                        onChange={(e) => {
+                          setPromoCode(e.target.value.toUpperCase());
+                          setPromoError('');
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleApplyPromo();
+                          }
+                        }}
+                        placeholder="Enter code"
+                        className={`flex-1 bg-sand/20 border p-2 rounded-sm text-sm focus:outline-none transition-colors ${
+                          promoError ? 'border-red-400' : 'border-cedar/20 focus:border-cedar'
+                        }`}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleApplyPromo}
+                        className="px-4 py-2 bg-midnight text-sand text-xs font-bold uppercase rounded-sm hover:bg-cedar transition-colors"
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  )}
+                  {promoError && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle size={12} /> {promoError}
+                    </p>
+                  )}
                 </div>
-                <p className="text-[10px] text-cedar/50 mt-1">*Shipping fees confirmed via WhatsApp</p>
+
+                {/* Order Total */}
+                <div className="space-y-2 mb-6">
+                  <div className="flex justify-between text-sm text-cedar">
+                    <span>Subtotal</span>
+                    <span>{subtotal} MAD</span>
+                  </div>
+                  {appliedPromo && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Discount ({appliedPromo.code})</span>
+                      <span>-{discountAmount} MAD</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-sm text-cedar">
+                    <span>Shipping</span>
+                    <span>{shippingCost === 0 ? 'Free' : `${shippingCost} MAD`}</span>
+                  </div>
+                  <div className="flex justify-between text-xl font-serif font-bold text-midnight border-t border-cedar/10 pt-2">
+                    <span>Total</span>
+                    <span>{totalWithShipping} MAD</span>
+                  </div>
+                </div>
               </div>
 
               <Button type="submit" className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white border-none">

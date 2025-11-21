@@ -9,9 +9,34 @@ const Home: React.FC = () => {
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    let rafId: number | null = null;
+    let lastScrollY = window.scrollY;
+
+    // Throttle scroll handler using requestAnimationFrame
+    const handleScroll = () => {
+      if (rafId !== null) return;
+
+      rafId = requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+
+        // Only update if scroll position changed significantly (optimization)
+        if (Math.abs(currentScrollY - lastScrollY) > 1) {
+          setScrollY(currentScrollY);
+          lastScrollY = currentScrollY;
+        }
+
+        rafId = null;
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+    };
   }, []);
 
   return (

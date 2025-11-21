@@ -6,6 +6,7 @@ import { FadeIn } from '../components/UI';
 import { GeneratedImage } from '../components/GeneratedImage';
 import { useCartStore } from '../store';
 import { SEO } from '../components/SEO';
+import { Breadcrumb } from '../components/Breadcrumb';
 
 type SortOption = 'featured' | 'price-low' | 'price-high' | 'name-az' | 'name-za';
 
@@ -51,6 +52,8 @@ const Shop: React.FC = () => {
         description="Browse our collection of hand-poured Moroccan candles. Woody, floral, warm, and fresh scents. 100% vegetable wax, 40+ hour burn time."
         type="website"
       />
+
+      <Breadcrumb className="mb-8" />
 
       <FadeIn>
         <div className="text-center mb-12">

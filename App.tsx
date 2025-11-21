@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar, Footer, CartDrawer } from './components/Layout';
 import { ToastContainer } from './components/Toast';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductDetail from './pages/ProductDetail';
@@ -39,17 +40,19 @@ const App: React.FC = () => {
         <ToastContainer />
 
         <main id="main-content" className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/product/:slug" element={<ProductDetail />} />
-            <Route path="/checkout" element={<CartCheckout />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/rituals" element={<Rituals />} />
-            <Route path="/spas" element={<Spas />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/product/:slug" element={<ProductDetail />} />
+              <Route path="/checkout" element={<CartCheckout />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/rituals" element={<Rituals />} />
+              <Route path="/spas" element={<Spas />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </ErrorBoundary>
         </main>
 
         <Footer />

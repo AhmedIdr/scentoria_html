@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingBag, Menu, X, Instagram, Facebook, Mail } from 'lucide-react';
 import { useCartStore } from '../store';
+import { useToastStore } from './Toast';
 import { NAV_LINKS } from '../constants';
 import { Button } from './UI';
 import { GeneratedImage } from './GeneratedImage';
@@ -112,21 +113,33 @@ export const Navbar: React.FC = () => {
         aria-label="Mobile navigation menu"
       >
         <button
-          className="absolute top-6 right-6"
+          className={`absolute top-6 right-6 transition-all duration-300 ${
+            mobileMenuOpen
+              ? 'opacity-100 rotate-0 delay-300'
+              : 'opacity-0 rotate-90'
+          }`}
           onClick={() => setMobileMenuOpen(false)}
           aria-label="Close mobile menu"
         >
           <X size={32} />
         </button>
-        {NAV_LINKS.map((link) => {
+        {NAV_LINKS.map((link, index) => {
           const isActive = location.pathname === link.path;
+          const delay = mobileMenuOpen ? index * 80 : 0;
           return (
             <Link
               key={link.name}
               to={link.path}
-              className={`text-4xl font-serif italic transition-colors ${
+              className={`text-4xl font-serif italic transition-all duration-500 ${
                 isActive ? 'text-gold' : 'text-sand hover:text-gold'
+              } ${
+                mobileMenuOpen
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-8'
               }`}
+              style={{
+                transitionDelay: `${delay}ms`
+              }}
               onClick={() => setMobileMenuOpen(false)}
               aria-current={isActive ? 'page' : undefined}
             >
@@ -141,23 +154,71 @@ export const Navbar: React.FC = () => {
 };
 
 export const Footer: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { addToast } = useToastStore();
+
+  const validateEmail = (email: string): boolean => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email.trim()) {
+      addToast('Please enter your email address', 'error');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      addToast('Please enter a valid email address', 'error');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // Simulate API call - in production, replace with actual API endpoint
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Success
+      addToast('Successfully subscribed! Welcome to Scentoria.', 'success');
+      setEmail('');
+    } catch (error) {
+      addToast('Something went wrong. Please try again.', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <footer className="bg-midnight text-sand pt-24 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
         <div className="col-span-1 md:col-span-1 space-y-6">
           <h4 className="text-xs uppercase tracking-widest text-gold font-bold">Newsletter</h4>
           <p className="text-sand/60 font-serif italic text-lg">Join our inner circle for early access to new scents.</p>
-          <div className="flex border-b border-sand/20 pb-2">
+          <form onSubmit={handleNewsletterSubmit} className="flex border-b border-sand/20 pb-2">
             <label htmlFor="newsletter-email" className="sr-only">Email address</label>
             <input
               id="newsletter-email"
               type="email"
               placeholder="Email address"
-              className="bg-transparent w-full outline-none text-sm placeholder-sand/30"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isSubmitting}
+              className="bg-transparent w-full outline-none text-sm placeholder-sand/30 disabled:opacity-50"
               aria-label="Email address for newsletter"
             />
-            <button className="uppercase text-xs font-bold text-gold" aria-label="Subscribe to newsletter">Join</button>
-          </div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="uppercase text-xs font-bold text-gold hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Subscribe to newsletter"
+            >
+              {isSubmitting ? '...' : 'Join'}
+            </button>
+          </form>
         </div>
 
         <div className="col-span-1 md:col-span-1">

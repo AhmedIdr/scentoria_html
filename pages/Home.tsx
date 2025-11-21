@@ -34,8 +34,8 @@ const Home: React.FC = () => {
         </div>
 
         {/* Cinematic Overlay */}
-        <div className="absolute inset-0 bg-midnight/30 mix-blend-multiply z-10 pointer-events-none"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-midnight via-midnight/40 to-transparent z-10 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-midnight/40 mix-blend-multiply z-10 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-midnight via-midnight/60 to-transparent z-10 pointer-events-none"></div>
 
         {/* Hero Content */}
         <div className="relative z-20 max-w-6xl w-full">

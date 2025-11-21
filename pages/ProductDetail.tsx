@@ -10,7 +10,8 @@ const ProductDetail: React.FC = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { addItem } = useCartStore();
-  
+  const [quantity, setQuantity] = React.useState(1);
+
   const product = PRODUCTS.find(p => p.slug === slug);
 
   if (!product) {
@@ -85,10 +86,41 @@ const ProductDetail: React.FC = () => {
               </div>
             </div>
 
+            {/* Quantity Selector */}
+            <div className="mb-6">
+              <label className="text-sm text-cedar/60 uppercase tracking-wide mb-2 block">Quantity</label>
+              <div className="flex items-center border border-cedar/20 w-32">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="w-10 h-10 flex items-center justify-center hover:bg-cedar/10 transition-colors"
+                  aria-label="Decrease quantity"
+                >
+                  -
+                </button>
+                <span className="flex-1 text-center text-lg font-medium">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="w-10 h-10 flex items-center justify-center hover:bg-cedar/10 transition-colors"
+                  aria-label="Increase quantity"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
             {/* Actions */}
             <div className="flex space-x-4">
-               <Button onClick={() => addItem(product)} size="lg" className="flex-1">
-                 Add to Cart
+               <Button
+                 onClick={() => {
+                   for (let i = 0; i < quantity; i++) {
+                     addItem(product);
+                   }
+                   setQuantity(1);
+                 }}
+                 size="lg"
+                 className="flex-1"
+               >
+                 Add to Cart — {product.price * quantity} MAD
                </Button>
             </div>
           </FadeIn>

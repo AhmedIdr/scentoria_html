@@ -12,8 +12,19 @@ export const Navbar: React.FC = () => {
   const { items, toggleDrawer } = useCartStore();
   const location = useLocation();
   const isHome = location.pathname === '/';
-  
+
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+
+  // Close mobile menu on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -28,12 +39,26 @@ export const Navbar: React.FC = () => {
   }`;
 
   return (
-    <nav className={navClasses}>
-      <div className="max-w-full mx-auto px-6 md:px-12 flex justify-between items-center">
-        {/* Mobile Menu Button */}
-        <button className="md:hidden" onClick={() => setMobileMenuOpen(true)}>
-          <Menu size={24} />
-        </button>
+    <>
+      {/* Skip to main content link for accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-midnight focus:text-sand focus:rounded"
+      >
+        Skip to main content
+      </a>
+
+      <nav className={navClasses} role="navigation" aria-label="Main navigation">
+        <div className="max-w-full mx-auto px-6 md:px-12 flex justify-between items-center">
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label="Open mobile menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            <Menu size={24} />
+          </button>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex space-x-10">
@@ -56,7 +81,11 @@ export const Navbar: React.FC = () => {
 
         {/* Cart Icon */}
         <div className="flex items-center space-x-4">
-          <button className="relative group" onClick={() => toggleDrawer(true)}>
+          <button
+            className="relative group"
+            onClick={() => toggleDrawer(true)}
+            aria-label={`Shopping cart with ${itemCount} item${itemCount !== 1 ? 's' : ''}`}
+          >
             <ShoppingBag size={22} className="group-hover:scale-110 transition-transform duration-300" />
             {itemCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-clay text-midnight text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
@@ -68,8 +97,17 @@ export const Navbar: React.FC = () => {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`fixed inset-0 bg-midnight z-50 flex flex-col items-center justify-center space-y-10 text-sand transition-transform duration-500 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <button className="absolute top-6 right-6" onClick={() => setMobileMenuOpen(false)}>
+      <div
+        className={`fixed inset-0 bg-midnight z-50 flex flex-col items-center justify-center space-y-10 text-sand transition-transform duration-500 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobile navigation menu"
+      >
+        <button
+          className="absolute top-6 right-6"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-label="Close mobile menu"
+        >
           <X size={32} />
         </button>
         {NAV_LINKS.map((link) => (
@@ -84,6 +122,7 @@ export const Navbar: React.FC = () => {
         ))}
       </div>
     </nav>
+    </>
   );
 };
 
@@ -95,12 +134,15 @@ export const Footer: React.FC = () => {
           <h4 className="text-xs uppercase tracking-widest text-gold font-bold">Newsletter</h4>
           <p className="text-sand/60 font-serif italic text-lg">Join our inner circle for early access to new scents.</p>
           <div className="flex border-b border-sand/20 pb-2">
-            <input 
-              type="email" 
-              placeholder="Email address" 
+            <label htmlFor="newsletter-email" className="sr-only">Email address</label>
+            <input
+              id="newsletter-email"
+              type="email"
+              placeholder="Email address"
               className="bg-transparent w-full outline-none text-sm placeholder-sand/30"
+              aria-label="Email address for newsletter"
             />
-            <button className="uppercase text-xs font-bold text-gold">Join</button>
+            <button className="uppercase text-xs font-bold text-gold" aria-label="Subscribe to newsletter">Join</button>
           </div>
         </div>
 
@@ -125,9 +167,15 @@ export const Footer: React.FC = () => {
         <div className="col-span-1 md:col-span-1">
            <h4 className="text-xs uppercase tracking-widest text-gold font-bold mb-6">Social</h4>
            <div className="flex space-x-6 text-sand/70">
-             <Instagram size={20} className="hover:text-white cursor-pointer transition-colors" />
-             <Facebook size={20} className="hover:text-white cursor-pointer transition-colors" />
-             <Mail size={20} className="hover:text-white cursor-pointer transition-colors" />
+             <a href="#" aria-label="Follow us on Instagram" className="hover:text-white transition-colors">
+               <Instagram size={20} />
+             </a>
+             <a href="#" aria-label="Follow us on Facebook" className="hover:text-white transition-colors">
+               <Facebook size={20} />
+             </a>
+             <a href="mailto:hello@scentoria.ma" aria-label="Email us" className="hover:text-white transition-colors">
+               <Mail size={20} />
+             </a>
            </div>
         </div>
       </div>
@@ -149,17 +197,38 @@ export const Footer: React.FC = () => {
 export const CartDrawer: React.FC = () => {
   const { items, isDrawerOpen, toggleDrawer, removeItem, updateQuantity, getTotalPrice } = useCartStore();
 
+  // Close drawer on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isDrawerOpen) {
+        toggleDrawer(false);
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isDrawerOpen, toggleDrawer]);
+
   return (
     <>
-      <div 
+      <div
         className={`fixed inset-0 bg-midnight/60 backdrop-blur-sm z-[60] transition-opacity duration-500 ${isDrawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={() => toggleDrawer(false)}
+        aria-hidden="true"
       />
       
-      <div className={`fixed inset-y-0 right-0 w-full max-w-md bg-sand z-[70] shadow-2xl transform transition-transform duration-500 cubic-bezier(0.22, 1, 0.36, 1) flex flex-col ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div
+        className={`fixed inset-y-0 right-0 w-full max-w-md bg-sand z-[70] shadow-2xl transform transition-transform duration-500 cubic-bezier(0.22, 1, 0.36, 1) flex flex-col ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Shopping cart"
+      >
         <div className="p-8 flex justify-between items-center border-b border-cedar/10">
           <h2 className="text-2xl font-serif text-midnight italic">Your Rituals</h2>
-          <button onClick={() => toggleDrawer(false)} className="text-cedar hover:text-midnight transition-transform hover:rotate-90 duration-300">
+          <button
+            onClick={() => toggleDrawer(false)}
+            className="text-cedar hover:text-midnight transition-transform hover:rotate-90 duration-300"
+            aria-label="Close cart"
+          >
             <X size={24} />
           </button>
         </div>
@@ -194,12 +263,31 @@ export const CartDrawer: React.FC = () => {
                   </div>
                   
                   <div className="flex justify-between items-end">
-                    <div className="flex items-center border border-cedar/20">
-                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-8 h-8 flex items-center justify-center hover:bg-cedar/10 transition-colors">-</button>
-                      <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-cedar/10 transition-colors">+</button>
+                    <div className="flex items-center border border-cedar/20" role="group" aria-label="Quantity controls">
+                      <button
+                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        className="w-8 h-8 flex items-center justify-center hover:bg-cedar/10 transition-colors"
+                        aria-label="Decrease quantity"
+                        disabled={item.quantity <= 1}
+                      >
+                        -
+                      </button>
+                      <span className="w-8 text-center text-sm font-medium" aria-label={`Quantity: ${item.quantity}`}>{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        className="w-8 h-8 flex items-center justify-center hover:bg-cedar/10 transition-colors"
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
                     </div>
-                    <button onClick={() => removeItem(item.id)} className="text-xs text-cedar/40 hover:text-red-500 underline decoration-1 underline-offset-2 transition-colors">Remove</button>
+                    <button
+                      onClick={() => removeItem(item.id)}
+                      className="text-xs text-cedar/40 hover:text-red-500 underline decoration-1 underline-offset-2 transition-colors"
+                      aria-label={`Remove ${item.name} from cart`}
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
               </div>

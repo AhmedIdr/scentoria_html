@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { create } from 'zustand';
 import { CheckCircle, X, AlertCircle } from 'lucide-react';
+import { useCartStore } from '../store';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -69,10 +70,13 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({
 
 export const ToastContainer: React.FC = () => {
   const { toasts, removeToast } = useToastStore();
+  const isDrawerOpen = useCartStore((state) => state.isDrawerOpen);
 
   return (
     <div
-      className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"
+      className={`fixed bottom-6 z-[100] flex flex-col gap-3 pointer-events-none transition-all duration-500 ${
+        isDrawerOpen ? 'right-[calc(32rem+1.5rem)]' : 'right-6'
+      }`}
       aria-live="polite"
       aria-atomic="true"
     >

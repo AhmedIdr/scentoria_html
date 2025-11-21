@@ -30,12 +30,11 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   return (
-    <button 
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`} 
+    <button
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
-      <span className={`absolute inset-0 w-full h-full bg-midnight transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left ${variant === 'outline' ? 'bg-cedar' : ''}`}></span>
-      <span className="relative z-10 flex items-center gap-2">{children}</span>
+      <span className="flex items-center gap-2">{children}</span>
     </button>
   );
 };

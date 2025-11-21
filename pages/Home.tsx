@@ -7,7 +7,6 @@ import { SEO } from '../components/SEO';
 
 const Home: React.FC = () => {
   const [scrollY, setScrollY] = useState(0);
-  const [videoError, setVideoError] = useState(false);
 
   useEffect(() => {
     let rafId: number | null = null;
@@ -50,44 +49,28 @@ const Home: React.FC = () => {
 
       {/* --- Hero Section --- */}
       <section className="relative h-screen w-full flex items-end pb-20 md:pb-32 px-6 md:px-12 overflow-hidden bg-midnight">
-        {/* Video/Image Background */}
+        {/* Cinematic Animated Background */}
         <div className="absolute inset-0 w-full h-full z-0">
-          {!videoError ? (
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              onError={() => setVideoError(true)}
-              className="w-full h-full object-cover opacity-40"
+          <div className="w-full h-full relative overflow-hidden">
+            {/* Multi-layer gradient with parallax */}
+            <div
+              className="absolute inset-0 bg-gradient-to-br from-[#2d2a26] via-[#1a1816] to-midnight"
               style={{
                 transform: `scale(1.1) translateY(${scrollY * 0.15}px)`,
                 willChange: 'transform'
               }}
             >
-              {/* Multiple video sources for better compatibility */}
-              <source src="https://videos.pexels.com/video-files/6985396/6985396-uhd_2560_1440_30fps.mp4" type="video/mp4" />
-              <source src="https://cdn.coverr.co/videos/coverr-candles-on-a-table-3646/1080p.mp4" type="video/mp4" />
-            </video>
-          ) : (
-            // Fallback to animated gradient if video fails
-            <div className="w-full h-full relative overflow-hidden">
-              <div
-                className="absolute inset-0 bg-gradient-to-br from-[#2d2a26] via-[#1a1816] to-midnight"
-                style={{
-                  transform: `scale(1.1) translateY(${scrollY * 0.15}px)`,
-                  willChange: 'transform'
-                }}
-              >
-                {/* Animated grain texture */}
-                <div className="absolute inset-0 opacity-30">
-                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuNSIvPjwvc3ZnPg==')] animate-grain"></div>
-                </div>
-                {/* Subtle glow effect */}
-                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-gold/5 rounded-full blur-3xl"></div>
+              {/* Animated grain texture */}
+              <div className="absolute inset-0 opacity-30">
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuNSIvPjwvc3ZnPg==')] animate-grain"></div>
               </div>
+
+              {/* Multiple ambient glows for depth */}
+              <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-gold/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }}></div>
+              <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-clay/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '12s', animationDelay: '2s' }}></div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cedar/5 rounded-full blur-3xl"></div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Cinematic Overlay - darker for better contrast */}

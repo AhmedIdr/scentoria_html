@@ -178,38 +178,41 @@ const CartCheckout: React.FC = () => {
 
   return (
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto min-h-screen">
-      <SectionTitle title="Checkout" subtitle="Finalize Order" center={false} />
+      <SectionTitle title="Checkout" subtitle="Finalize Your Order" center={false} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         {/* Cart Items */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="bg-white p-6 rounded-sm shadow-sm border border-cedar/5">
-            <h3 className="font-serif text-xl mb-6 text-midnight">Order Summary</h3>
-            <div className="space-y-6">
+        <div className="lg:col-span-3 space-y-6">
+          <div className="bg-gradient-to-br from-white to-sand/20 p-8 rounded-xl shadow-xl border-2 border-cedar/10">
+            <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-cedar/20">
+              <h3 className="font-serif text-2xl text-midnight">Order Summary</h3>
+              <span className="text-sm text-cedar/60">{items.length} item{items.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div className="space-y-5">
               {items.map(item => (
-                <div key={item.id} className="flex gap-4 items-center border-b border-sand pb-6 last:border-0 last:pb-0">
-                  <div className="w-24 h-24 shrink-0 overflow-hidden rounded-sm">
-                    <GeneratedImage 
-                      prompt={item.imagePrompt} 
-                      alt={item.name} 
+                <div key={item.id} className="flex gap-5 items-center bg-white/60 backdrop-blur-sm p-5 rounded-lg border border-cedar/20 hover:shadow-lg transition-all duration-300">
+                  <div className="w-28 h-28 shrink-0 overflow-hidden rounded-lg shadow-md bg-sand/20">
+                    <GeneratedImage
+                      prompt={item.imagePrompt}
+                      alt={item.name}
                       aspectRatio="3:4"
-                      className="w-full h-full object-cover" 
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="flex-1">
-                    <div className="flex justify-between mb-1">
-                      <h4 className="font-serif text-lg text-midnight">{item.name}</h4>
-                      <span className="font-medium">{item.price * item.quantity} MAD</span>
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-serif text-xl text-midnight leading-tight">{item.name}</h4>
+                      <span className="font-bold text-midnight text-lg ml-3">{item.price * item.quantity} <span className="text-sm font-normal text-cedar/70">MAD</span></span>
                     </div>
-                    <p className="text-xs text-cedar/50 uppercase mb-4">{item.size}</p>
-                    
+                    <p className="text-xs text-cedar/60 uppercase tracking-wider mb-4">{item.size}</p>
+
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center border border-cedar/20 rounded bg-sand/20">
-                        <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-3 py-1 hover:bg-cedar/10">-</button>
-                        <span className="px-3 text-sm">{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-3 py-1 hover:bg-cedar/10">+</button>
+                      <div className="flex items-center border-2 border-cedar/30 rounded-lg overflow-hidden shadow-sm bg-white">
+                        <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="px-4 py-2 hover:bg-cedar/20 transition-colors font-medium">−</button>
+                        <span className="px-4 py-2 text-sm font-semibold border-x-2 border-cedar/20">{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="px-4 py-2 hover:bg-cedar/20 transition-colors font-medium">+</button>
                       </div>
-                      <button onClick={() => removeItem(item.id)} className="text-xs text-red-400 hover:text-red-600 underline">Remove</button>
+                      <button onClick={() => removeItem(item.id)} className="text-xs text-cedar/50 hover:text-red-600 font-medium underline">Remove</button>
                     </div>
                   </div>
                 </div>
@@ -219,16 +222,18 @@ const CartCheckout: React.FC = () => {
         </div>
 
         {/* Order Form */}
-        <div className="lg:col-span-1">
-          <div className="bg-white p-8 rounded-sm shadow-lg border-t-4 border-midnight sticky top-32">
-            <h3 className="font-serif text-2xl mb-2 text-midnight">Complete Order</h3>
-            <p className="text-sm text-cedar/60 mb-6">
-              We finalize all orders via WhatsApp to ensure smooth delivery coordination in Morocco.
-            </p>
+        <div className="lg:col-span-2">
+          <div className="bg-gradient-to-br from-midnight to-midnight/95 p-8 rounded-xl shadow-2xl sticky top-32 border border-gold/20">
+            <div className="mb-6 pb-6 border-b border-gold/20">
+              <h3 className="font-serif text-3xl mb-2 text-sand italic">Complete Order</h3>
+              <p className="text-sm text-sand/60 leading-relaxed">
+                We finalize all orders via WhatsApp to ensure smooth delivery coordination in Morocco.
+              </p>
+            </div>
             
-            <form onSubmit={handleWhatsAppOrder} className="space-y-4">
+            <form onSubmit={handleWhatsAppOrder} className="space-y-5">
               <div>
-                <label htmlFor="name" className="block text-xs uppercase font-bold text-cedar/70 mb-1">
+                <label htmlFor="name" className="block text-xs uppercase font-bold text-gold/90 mb-2 tracking-wider">
                   Full Name *
                 </label>
                 <input
@@ -238,22 +243,22 @@ const CartCheckout: React.FC = () => {
                   value={formData.name}
                   onChange={handleInputChange}
                   onBlur={() => handleBlur('name')}
-                  className={`w-full bg-sand/20 border p-3 rounded-sm focus:outline-none transition-colors ${
+                  className={`w-full bg-white/10 backdrop-blur-sm border-2 p-4 rounded-lg focus:outline-none transition-all text-sand placeholder-sand/40 ${
                     errors.name && touched.name
-                      ? 'border-red-400 focus:border-red-500'
-                      : 'border-cedar/20 focus:border-cedar'
+                      ? 'border-red-400 focus:border-red-500 shadow-lg shadow-red-500/20'
+                      : 'border-gold/20 focus:border-gold focus:shadow-lg focus:shadow-gold/20'
                   }`}
                   placeholder="e.g. Amina Benali"
                 />
                 {errors.name && touched.name && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-red-400 text-xs mt-2 flex items-center gap-1 bg-red-500/10 p-2 rounded">
                     <AlertCircle size={12} /> {errors.name}
                   </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-xs uppercase font-bold text-cedar/70 mb-1">
+                <label htmlFor="email" className="block text-xs uppercase font-bold text-gold/90 mb-2 tracking-wider">
                   Email Address *
                 </label>
                 <input
@@ -263,22 +268,22 @@ const CartCheckout: React.FC = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   onBlur={() => handleBlur('email')}
-                  className={`w-full bg-sand/20 border p-3 rounded-sm focus:outline-none transition-colors ${
+                  className={`w-full bg-white/10 backdrop-blur-sm border-2 p-4 rounded-lg focus:outline-none transition-all text-sand placeholder-sand/40 ${
                     errors.email && touched.email
-                      ? 'border-red-400 focus:border-red-500'
-                      : 'border-cedar/20 focus:border-cedar'
+                      ? 'border-red-400 focus:border-red-500 shadow-lg shadow-red-500/20'
+                      : 'border-gold/20 focus:border-gold focus:shadow-lg focus:shadow-gold/20'
                   }`}
                   placeholder="e.g. amina@example.com"
                 />
                 {errors.email && touched.email && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-red-400 text-xs mt-2 flex items-center gap-1 bg-red-500/10 p-2 rounded">
                     <AlertCircle size={12} /> {errors.email}
                   </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-xs uppercase font-bold text-cedar/70 mb-1">
+                <label htmlFor="phone" className="block text-xs uppercase font-bold text-gold/90 mb-2 tracking-wider">
                   Phone Number *
                 </label>
                 <input
@@ -288,22 +293,22 @@ const CartCheckout: React.FC = () => {
                   value={formData.phone}
                   onChange={handleInputChange}
                   onBlur={() => handleBlur('phone')}
-                  className={`w-full bg-sand/20 border p-3 rounded-sm focus:outline-none transition-colors ${
+                  className={`w-full bg-white/10 backdrop-blur-sm border-2 p-4 rounded-lg focus:outline-none transition-all text-sand placeholder-sand/40 ${
                     errors.phone && touched.phone
-                      ? 'border-red-400 focus:border-red-500'
-                      : 'border-cedar/20 focus:border-cedar'
+                      ? 'border-red-400 focus:border-red-500 shadow-lg shadow-red-500/20'
+                      : 'border-gold/20 focus:border-gold focus:shadow-lg focus:shadow-gold/20'
                   }`}
                   placeholder="e.g. 0600000000"
                 />
                 {errors.phone && touched.phone && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-red-400 text-xs mt-2 flex items-center gap-1 bg-red-500/10 p-2 rounded">
                     <AlertCircle size={12} /> {errors.phone}
                   </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="city" className="block text-xs uppercase font-bold text-cedar/70 mb-1">
+                <label htmlFor="city" className="block text-xs uppercase font-bold text-gold/90 mb-2 tracking-wider">
                   City / Area *
                 </label>
                 <input
@@ -313,47 +318,47 @@ const CartCheckout: React.FC = () => {
                   value={formData.city}
                   onChange={handleInputChange}
                   onBlur={() => handleBlur('city')}
-                  className={`w-full bg-sand/20 border p-3 rounded-sm focus:outline-none transition-colors ${
+                  className={`w-full bg-white/10 backdrop-blur-sm border-2 p-4 rounded-lg focus:outline-none transition-all text-sand placeholder-sand/40 ${
                     errors.city && touched.city
-                      ? 'border-red-400 focus:border-red-500'
-                      : 'border-cedar/20 focus:border-cedar'
+                      ? 'border-red-400 focus:border-red-500 shadow-lg shadow-red-500/20'
+                      : 'border-gold/20 focus:border-gold focus:shadow-lg focus:shadow-gold/20'
                   }`}
                   placeholder="e.g. Casablanca, Maarif"
                 />
                 {errors.city && touched.city && (
-                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                  <p className="text-red-400 text-xs mt-2 flex items-center gap-1 bg-red-500/10 p-2 rounded">
                     <AlertCircle size={12} /> {errors.city}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-xs uppercase font-bold text-cedar/70 mb-2">Shipping Method *</label>
-                <div className="space-y-2">
+                <label className="block text-xs uppercase font-bold text-gold/90 mb-3 tracking-wider">Shipping Method *</label>
+                <div className="space-y-3">
                   {Object.entries(shippingOptions).map(([key, option]) => (
                     <label
                       key={key}
-                      className={`flex items-center justify-between p-3 border rounded-sm cursor-pointer transition-all ${
+                      className={`flex items-center justify-between p-4 border-2 rounded-lg cursor-pointer transition-all ${
                         formData.shippingMethod === key
-                          ? 'border-cedar bg-cedar/5'
-                          : 'border-cedar/20 hover:border-cedar/40'
+                          ? 'border-gold bg-gold/10 shadow-lg shadow-gold/20'
+                          : 'border-gold/20 hover:border-gold/40 bg-white/5'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-4">
                         <input
                           type="radio"
                           name="shippingMethod"
                           value={key}
                           checked={formData.shippingMethod === key}
                           onChange={handleInputChange}
-                          className="w-4 h-4 text-cedar focus:ring-cedar/20"
+                          className="w-5 h-5 text-gold focus:ring-gold/20"
                         />
                         <div>
-                          <p className="font-medium text-sm">{option.label}</p>
-                          <p className="text-xs text-cedar/60">{option.days}</p>
+                          <p className="font-semibold text-sm text-sand">{option.label}</p>
+                          <p className="text-xs text-sand/60">{option.days}</p>
                         </div>
                       </div>
-                      <span className="font-bold text-sm">
+                      <span className="font-bold text-sm text-gold">
                         {option.price === 0 ? 'Free' : `${option.price} MAD`}
                       </span>
                     </label>
@@ -362,7 +367,7 @@ const CartCheckout: React.FC = () => {
               </div>
 
               <div>
-                <label htmlFor="notes" className="block text-xs uppercase font-bold text-cedar/70 mb-1">
+                <label htmlFor="notes" className="block text-xs uppercase font-bold text-gold/90 mb-2 tracking-wider">
                   Special Requests
                 </label>
                 <textarea
@@ -370,25 +375,25 @@ const CartCheckout: React.FC = () => {
                   name="notes"
                   value={formData.notes}
                   onChange={handleInputChange}
-                  className="w-full bg-sand/20 border border-cedar/20 p-3 rounded-sm focus:outline-none focus:border-cedar transition-colors h-24 resize-none"
+                  className="w-full bg-white/10 backdrop-blur-sm border-2 border-gold/20 p-4 rounded-lg focus:outline-none focus:border-gold focus:shadow-lg focus:shadow-gold/20 transition-all h-24 resize-none text-sand placeholder-sand/40"
                   placeholder="e.g. It's a gift, please deliver after 6 PM..."
                 />
               </div>
 
-              <div className="border-t border-cedar/10 pt-4 mt-2">
+              <div className="border-t-2 border-gold/30 pt-6 mt-6">
                 {/* Promo Code Field */}
-                <div className="mb-4">
-                  <label className="block text-xs uppercase font-bold text-cedar/70 mb-2">Promo Code</label>
+                <div className="mb-6">
+                  <label className="block text-xs uppercase font-bold text-gold/90 mb-3 tracking-wider">Promo Code</label>
                   {appliedPromo ? (
-                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-sm">
-                      <div className="flex items-center gap-2">
-                        <span className="text-green-700 font-bold text-sm">{appliedPromo.code}</span>
-                        <span className="text-green-600 text-xs">applied</span>
+                    <div className="flex items-center justify-between p-4 bg-green-500/20 border-2 border-green-400/50 rounded-lg shadow-lg shadow-green-500/10">
+                      <div className="flex items-center gap-3">
+                        <span className="text-green-400 font-bold text-base">{appliedPromo.code}</span>
+                        <span className="text-green-300 text-xs px-2 py-1 bg-green-500/20 rounded">applied</span>
                       </div>
                       <button
                         type="button"
                         onClick={handleRemovePromo}
-                        className="text-xs text-red-500 hover:text-red-700 underline"
+                        className="text-xs text-red-400 hover:text-red-300 underline font-medium"
                       >
                         Remove
                       </button>
@@ -409,53 +414,56 @@ const CartCheckout: React.FC = () => {
                           }
                         }}
                         placeholder="Enter code"
-                        className={`flex-1 bg-sand/20 border p-2 rounded-sm text-sm focus:outline-none transition-colors ${
-                          promoError ? 'border-red-400' : 'border-cedar/20 focus:border-cedar'
+                        className={`flex-1 bg-white/10 backdrop-blur-sm border-2 p-3 rounded-lg text-sm focus:outline-none transition-all text-sand placeholder-sand/40 ${
+                          promoError ? 'border-red-400 shadow-lg shadow-red-500/20' : 'border-gold/20 focus:border-gold'
                         }`}
                       />
                       <button
                         type="button"
                         onClick={handleApplyPromo}
-                        className="px-4 py-2 bg-midnight text-sand text-xs font-bold uppercase rounded-sm hover:bg-cedar transition-colors"
+                        className="px-5 py-3 bg-gold text-midnight text-xs font-bold uppercase rounded-lg hover:bg-gold/90 transition-colors shadow-lg"
                       >
                         Apply
                       </button>
                     </div>
                   )}
                   {promoError && (
-                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <p className="text-red-400 text-xs mt-2 flex items-center gap-1 bg-red-500/10 p-2 rounded">
                       <AlertCircle size={12} /> {promoError}
                     </p>
                   )}
                 </div>
 
                 {/* Order Total */}
-                <div className="space-y-2 mb-6">
-                  <div className="flex justify-between text-sm text-cedar">
-                    <span>Subtotal</span>
-                    <span>{subtotal} MAD</span>
-                  </div>
-                  {appliedPromo && (
-                    <div className="flex justify-between text-sm text-green-600">
-                      <span>Discount ({appliedPromo.code})</span>
-                      <span>-{discountAmount} MAD</span>
+                <div className="bg-white/5 backdrop-blur-sm p-6 rounded-lg border-2 border-gold/20 mb-6">
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm text-sand/80">
+                      <span>Subtotal</span>
+                      <span>{subtotal} MAD</span>
                     </div>
-                  )}
-                  <div className="flex justify-between text-sm text-cedar">
-                    <span>Shipping</span>
-                    <span>{shippingCost === 0 ? 'Free' : `${shippingCost} MAD`}</span>
-                  </div>
-                  <div className="flex justify-between text-xl font-serif font-bold text-midnight border-t border-cedar/10 pt-2">
-                    <span>Total</span>
-                    <span>{totalWithShipping} MAD</span>
+                    {appliedPromo && (
+                      <div className="flex justify-between text-sm text-green-400">
+                        <span>Discount ({appliedPromo.code})</span>
+                        <span>-{discountAmount} MAD</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-sm text-sand/80">
+                      <span>Shipping</span>
+                      <span className={shippingCost === 0 ? 'text-green-400' : ''}>{shippingCost === 0 ? 'Free' : `${shippingCost} MAD`}</span>
+                    </div>
+                    <div className="flex justify-between text-2xl font-serif font-bold text-sand border-t-2 border-gold/30 pt-4">
+                      <span>Total</span>
+                      <span>{totalWithShipping} <span className="text-base font-normal text-sand/70">MAD</span></span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <Button type="submit" className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white border-none">
-                <MessageCircle size={18} />
-                Send Order to WhatsApp
+              <Button type="submit" className="w-full flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#128C7E] text-white border-none h-14 text-base font-bold shadow-xl hover:shadow-2xl transition-all rounded-lg">
+                <MessageCircle size={20} />
+                Send Order to WhatsApp →
               </Button>
+              <p className="text-center text-xs text-sand/50 mt-3">Secure checkout via WhatsApp</p>
             </form>
           </div>
         </div>

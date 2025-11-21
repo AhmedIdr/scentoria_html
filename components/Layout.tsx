@@ -193,65 +193,79 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-midnight text-sand pt-24 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-16 mb-24">
-        <div className="col-span-1 md:col-span-1 space-y-6">
-          <h4 className="text-xs uppercase tracking-widest text-gold font-bold">Newsletter</h4>
-          <p className="text-sand/60 font-serif italic text-lg">Join our inner circle for early access to new scents.</p>
-          <form onSubmit={handleNewsletterSubmit} className="flex border-b border-sand/20 pb-2">
+    <footer className="bg-midnight text-sand pt-24 pb-12 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Top Section: Newsletter Highlight */}
+        <div className="max-w-2xl mb-20">
+          <h4 className="text-xs uppercase tracking-[0.3em] text-gold font-bold mb-4">Newsletter</h4>
+          <p className="text-sand/80 font-serif italic text-2xl md:text-3xl mb-8 leading-relaxed">
+            Join our inner circle for early access to new scents and exclusive rituals.
+          </p>
+          <form onSubmit={handleNewsletterSubmit} className="flex items-center border-b-2 border-sand/30 pb-3 hover:border-gold transition-colors">
             <label htmlFor="newsletter-email" className="sr-only">Email address</label>
             <input
               id="newsletter-email"
               type="email"
-              placeholder="Email address"
+              placeholder="Enter your email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isSubmitting}
-              className="bg-transparent w-full outline-none text-sm placeholder-sand/30 disabled:opacity-50"
+              className="bg-transparent w-full outline-none text-base placeholder-sand/40 disabled:opacity-50"
               aria-label="Email address for newsletter"
             />
             <button
               type="submit"
               disabled={isSubmitting}
-              className="uppercase text-xs font-bold text-gold hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="uppercase text-xs font-bold text-gold hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed px-4"
               aria-label="Subscribe to newsletter"
             >
-              {isSubmitting ? '...' : 'Join'}
+              {isSubmitting ? 'Sending...' : 'Subscribe'}
             </button>
           </form>
         </div>
 
-        <div className="col-span-1 md:col-span-1">
-           <h4 className="text-xs uppercase tracking-widest text-gold font-bold mb-6">Explore</h4>
-           <ul className="space-y-4 text-sm text-sand/70">
-            <li><Link to="/shop" className="hover:text-white transition-colors">Shop All</Link></li>
-            <li><Link to="/rituals" className="hover:text-white transition-colors">Rituals Journal</Link></li>
-            <li><Link to="/about" className="hover:text-white transition-colors">Our Story</Link></li>
-           </ul>
-        </div>
+        {/* Bottom Section: Links Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12 mb-16">
+          <div>
+            <h4 className="text-xs uppercase tracking-[0.2em] text-gold font-bold mb-5">Explore</h4>
+            <ul className="space-y-3 text-sm text-sand/70">
+              <li><Link to="/shop" className="hover:text-white hover:translate-x-1 inline-block transition-all">Shop All</Link></li>
+              <li><Link to="/rituals" className="hover:text-white hover:translate-x-1 inline-block transition-all">Rituals Journal</Link></li>
+              <li><Link to="/about" className="hover:text-white hover:translate-x-1 inline-block transition-all">Our Story</Link></li>
+            </ul>
+          </div>
 
-        <div className="col-span-1 md:col-span-1">
-           <h4 className="text-xs uppercase tracking-widest text-gold font-bold mb-6">Support</h4>
-           <ul className="space-y-4 text-sm text-sand/70">
-            <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-            <li><Link to="/spas" className="hover:text-white transition-colors">B2B / Spas</Link></li>
-            <li><Link to="/contact" className="hover:text-white transition-colors">Shipping</Link></li>
-           </ul>
-        </div>
+          <div>
+            <h4 className="text-xs uppercase tracking-[0.2em] text-gold font-bold mb-5">Support</h4>
+            <ul className="space-y-3 text-sm text-sand/70">
+              <li><Link to="/contact" className="hover:text-white hover:translate-x-1 inline-block transition-all">Contact</Link></li>
+              <li><Link to="/spas" className="hover:text-white hover:translate-x-1 inline-block transition-all">B2B / Spas</Link></li>
+              <li><Link to="/contact" className="hover:text-white hover:translate-x-1 inline-block transition-all">Shipping</Link></li>
+            </ul>
+          </div>
 
-        <div className="col-span-1 md:col-span-1">
-           <h4 className="text-xs uppercase tracking-widest text-gold font-bold mb-6">Social</h4>
-           <div className="flex space-x-6 text-sand/70">
-             <a href="#" aria-label="Follow us on Instagram" className="hover:text-white transition-colors">
-               <Instagram size={20} />
-             </a>
-             <a href="#" aria-label="Follow us on Facebook" className="hover:text-white transition-colors">
-               <Facebook size={20} />
-             </a>
-             <a href="mailto:hello@scentoria.ma" aria-label="Email us" className="hover:text-white transition-colors">
-               <Mail size={20} />
-             </a>
-           </div>
+          <div>
+            <h4 className="text-xs uppercase tracking-[0.2em] text-gold font-bold mb-5">Connect</h4>
+            <div className="flex gap-4 text-sand/70">
+              <a href="#" aria-label="Follow us on Instagram" className="hover:text-gold hover:scale-110 transition-all">
+                <Instagram size={22} />
+              </a>
+              <a href="#" aria-label="Follow us on Facebook" className="hover:text-gold hover:scale-110 transition-all">
+                <Facebook size={22} />
+              </a>
+              <a href="mailto:hello@scentoria.ma" aria-label="Email us" className="hover:text-gold hover:scale-110 transition-all">
+                <Mail size={22} />
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-xs uppercase tracking-[0.2em] text-gold font-bold mb-5">Legal</h4>
+            <ul className="space-y-3 text-sm text-sand/70">
+              <li><Link to="/terms" className="hover:text-white hover:translate-x-1 inline-block transition-all">Terms</Link></li>
+              <li><Link to="/privacy" className="hover:text-white hover:translate-x-1 inline-block transition-all">Privacy</Link></li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -292,16 +306,19 @@ export const CartDrawer: React.FC = () => {
       />
       
       <div
-        className={`fixed inset-y-0 right-0 w-full max-w-md bg-sand z-[70] shadow-2xl transform transition-transform duration-500 cubic-bezier(0.22, 1, 0.36, 1) flex flex-col ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed inset-y-0 right-0 w-full max-w-lg bg-gradient-to-br from-sand via-sand to-sand/95 z-[70] shadow-[0_0_50px_rgba(0,0,0,0.3)] transform transition-transform duration-500 cubic-bezier(0.22, 1, 0.36, 1) flex flex-col ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}
         role="dialog"
         aria-modal="true"
         aria-label="Shopping cart"
       >
-        <div className="p-8 flex justify-between items-center border-b border-cedar/10">
-          <h2 className="text-2xl font-serif text-midnight italic">Your Rituals</h2>
+        <div className="p-8 flex justify-between items-center border-b border-cedar/20 bg-white/40 backdrop-blur-sm">
+          <div>
+            <h2 className="text-3xl font-serif text-midnight italic mb-1">Your Rituals</h2>
+            <p className="text-xs text-cedar/60 uppercase tracking-wider">Curated selection</p>
+          </div>
           <button
             onClick={() => toggleDrawer(false)}
-            className="text-cedar hover:text-midnight transition-transform hover:rotate-90 duration-300"
+            className="text-cedar hover:text-midnight transition-all hover:rotate-90 duration-300 p-2 hover:bg-cedar/10 rounded-full"
             aria-label="Close cart"
           >
             <X size={24} />
@@ -319,38 +336,38 @@ export const CartDrawer: React.FC = () => {
             </div>
           ) : (
             items.map((item) => (
-              <div key={item.id} className="flex space-x-6 group">
-                <div className="w-24 h-32 bg-gray-100 overflow-hidden shrink-0">
-                  <GeneratedImage 
-                    prompt={item.imagePrompt} 
-                    alt={item.name} 
+              <div key={item.id} className="flex space-x-5 group bg-white/60 backdrop-blur-sm p-5 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border border-cedar/10">
+                <div className="w-28 h-36 bg-sand/30 overflow-hidden shrink-0 rounded-md shadow-inner">
+                  <GeneratedImage
+                    prompt={item.imagePrompt}
+                    alt={item.name}
                     aspectRatio="3:4"
-                    className="w-full h-full object-cover" 
+                    className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="flex-1 flex flex-col justify-between py-1">
                   <div>
-                    <div className="flex justify-between items-start mb-1">
-                      <h3 className="font-serif text-lg text-midnight">{item.name}</h3>
-                      <p className="font-medium text-midnight">{item.price * item.quantity} MAD</p>
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-serif text-lg text-midnight leading-tight">{item.name}</h3>
+                      <p className="font-bold text-midnight text-lg ml-2">{item.price * item.quantity} <span className="text-sm font-normal text-cedar/70">MAD</span></p>
                     </div>
-                    <p className="text-xs text-cedar/60 uppercase tracking-wide">{item.size}</p>
+                    <p className="text-xs text-cedar/60 uppercase tracking-wider">{item.size}</p>
                   </div>
-                  
-                  <div className="flex justify-between items-end">
-                    <div className="flex items-center border border-cedar/20" role="group" aria-label="Quantity controls">
+
+                  <div className="flex justify-between items-end mt-4">
+                    <div className="flex items-center border-2 border-cedar/30 rounded-md overflow-hidden shadow-sm bg-white" role="group" aria-label="Quantity controls">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="w-8 h-8 flex items-center justify-center hover:bg-cedar/10 transition-colors"
+                        className="w-9 h-9 flex items-center justify-center hover:bg-cedar/20 transition-colors font-medium disabled:opacity-30 disabled:cursor-not-allowed"
                         aria-label="Decrease quantity"
                         disabled={item.quantity <= 1}
                       >
-                        -
+                        −
                       </button>
-                      <span className="w-8 text-center text-sm font-medium" aria-label={`Quantity: ${item.quantity}`}>{item.quantity}</span>
+                      <span className="w-10 text-center text-sm font-semibold border-x-2 border-cedar/20 h-9 flex items-center justify-center" aria-label={`Quantity: ${item.quantity}`}>{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="w-8 h-8 flex items-center justify-center hover:bg-cedar/10 transition-colors"
+                        className="w-9 h-9 flex items-center justify-center hover:bg-cedar/20 transition-colors font-medium"
                         aria-label="Increase quantity"
                       >
                         +
@@ -358,7 +375,7 @@ export const CartDrawer: React.FC = () => {
                     </div>
                     <button
                       onClick={() => removeItem(item.id)}
-                      className="text-xs text-cedar/40 hover:text-red-500 underline decoration-1 underline-offset-2 transition-colors"
+                      className="text-xs text-cedar/50 hover:text-red-600 font-medium underline decoration-1 underline-offset-2 transition-colors"
                       aria-label={`Remove ${item.name} from cart`}
                     >
                       Remove
@@ -371,14 +388,23 @@ export const CartDrawer: React.FC = () => {
         </div>
 
         {items.length > 0 && (
-          <div className="p-8 border-t border-cedar/10 bg-white/30">
-            <div className="flex justify-between items-center mb-6">
-              <span className="font-serif text-xl">Subtotal</span>
-              <span className="font-serif text-2xl font-medium">{getTotalPrice()} MAD</span>
+          <div className="p-8 border-t-2 border-cedar/20 bg-gradient-to-t from-white/70 to-white/40 backdrop-blur-md">
+            <div className="bg-white/80 p-6 rounded-lg shadow-inner mb-6 border border-cedar/20">
+              <div className="flex justify-between items-baseline mb-2">
+                <span className="text-sm text-cedar/70 uppercase tracking-wider">Subtotal</span>
+                <span className="text-sm text-cedar/60">{getTotalPrice()} MAD</span>
+              </div>
+              <div className="flex justify-between items-baseline pt-3 border-t border-cedar/10">
+                <span className="font-serif text-xl text-midnight">Total</span>
+                <span className="font-serif text-3xl font-bold text-midnight">{getTotalPrice()} <span className="text-base font-normal text-cedar/70">MAD</span></span>
+              </div>
             </div>
             <Link to="/checkout" onClick={() => toggleDrawer(false)} className="block w-full">
-              <Button className="w-full">Proceed to Checkout</Button>
+              <Button className="w-full h-14 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300 bg-midnight hover:bg-gold hover:text-midnight border-none">
+                Proceed to Checkout →
+              </Button>
             </Link>
+            <p className="text-center text-xs text-cedar/50 mt-4">Free shipping on orders over 500 MAD</p>
           </div>
         )}
       </div>

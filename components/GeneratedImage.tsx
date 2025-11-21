@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { RevealImage } from './UI';
 
 interface GeneratedImageProps {
   prompt: string;
@@ -57,45 +56,37 @@ export const GeneratedImage: React.FC<GeneratedImageProps> = ({
 
   const dimensions = getImageDimensions(aspectRatio);
   const seed = hashCode(prompt);
-  const category = getCategoryFromPrompt(prompt);
 
-  // Using Unsplash Source API with deterministic seed for consistent images
-  const src = `https://source.unsplash.com/${dimensions.width}x${dimensions.height}/?${category},luxury,minimalist&sig=${seed}`;
+  // Using Picsum Photos API with deterministic seed for consistent images
+  // Adding blur and grayscale for elegant, minimalist aesthetic
+  const src = `https://picsum.photos/seed/${seed}/${dimensions.width}/${dimensions.height}?grayscale&blur=1`;
 
   return (
-    <>
+    <div className={`relative overflow-hidden ${className}`}>
       {loading && (
-        <div className={`bg-sand/20 animate-pulse flex flex-col items-center justify-center ${className} absolute inset-0 z-10`}>
+        <div className="absolute inset-0 bg-sand/30 animate-pulse flex flex-col items-center justify-center z-10">
           <div className="w-8 h-8 border-2 border-cedar/20 border-t-cedar rounded-full animate-spin mb-2"></div>
           <span className="text-cedar/40 text-[10px] uppercase tracking-widest">Loading...</span>
         </div>
       )}
 
-      {error && (
-        <div className={`bg-sand/50 flex items-center justify-center ${className}`}>
+      {error ? (
+        <div className="absolute inset-0 bg-sand/50 flex items-center justify-center">
           <span className="text-cedar/40 text-xs px-4 text-center">Image unavailable</span>
         </div>
+      ) : (
+        <img
+          src={src}
+          alt={alt}
+          className={`w-full h-full object-cover ${loading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+          onLoad={() => setLoading(false)}
+          onError={() => {
+            setError(true);
+            setLoading(false);
+          }}
+          loading="lazy"
+        />
       )}
-
-      {!error && (
-        <div className="relative">
-          <RevealImage
-            src={src}
-            alt={alt}
-            className={className}
-          />
-          <img
-            src={src}
-            alt={alt}
-            className="hidden"
-            onLoad={() => setLoading(false)}
-            onError={() => {
-              setError(true);
-              setLoading(false);
-            }}
-          />
-        </div>
-      )}
-    </>
+    </div>
   );
 };

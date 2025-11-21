@@ -49,24 +49,34 @@ const Home: React.FC = () => {
 
       {/* --- Hero Section --- */}
       <section className="relative h-screen w-full flex items-end pb-20 md:pb-32 px-6 md:px-12 overflow-hidden bg-midnight">
-        {/* Parallax Background */}
-        <div 
-          className="absolute inset-0 w-full h-[120%] will-change-transform bg-midnight z-0"
-          style={{ 
-            transform: `translateY(${scrollY * 0.2}px)`
-          }}
-        >
-          <GeneratedImage 
-            prompt={STATIC_PROMPTS.HERO}
-            alt="Atmospheric Scentoria Spa"
-            aspectRatio="16:9"
-            className="w-full h-full"
-          />
+        {/* Video Background */}
+        <div className="absolute inset-0 w-full h-full z-0">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover opacity-40"
+            style={{
+              transform: `scale(1.1) translateY(${scrollY * 0.15}px)`,
+              willChange: 'transform'
+            }}
+          >
+            {/* Using royalty-free candle/spa ambiance video */}
+            <source src="https://cdn.pixabay.com/video/2022/11/15/139238-772493005_large.mp4" type="video/mp4" />
+            {/* Fallback to image if video fails */}
+            <GeneratedImage
+              prompt={STATIC_PROMPTS.HERO}
+              alt="Atmospheric Scentoria Spa"
+              aspectRatio="16:9"
+              className="w-full h-full"
+            />
+          </video>
         </div>
 
-        {/* Cinematic Overlay */}
-        <div className="absolute inset-0 bg-midnight/40 mix-blend-multiply z-10 pointer-events-none"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-midnight via-midnight/60 to-transparent z-10 pointer-events-none"></div>
+        {/* Cinematic Overlay - darker for better contrast */}
+        <div className="absolute inset-0 bg-midnight/60 z-10 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-midnight via-midnight/70 to-midnight/30 z-10 pointer-events-none"></div>
 
         {/* Hero Content */}
         <div className="relative z-20 max-w-6xl w-full">
@@ -86,7 +96,11 @@ const Home: React.FC = () => {
              
              <FadeIn delay={600} className="mt-8 md:mt-0">
                <Link to="/shop">
-                 <Button variant="secondary" size="lg" className="rounded-full bg-sand text-midnight hover:bg-white border-none">
+                 <Button
+                   variant="secondary"
+                   size="lg"
+                   className="rounded-full bg-gold text-midnight hover:bg-sand hover:text-midnight border-2 border-gold hover:border-midnight transition-all duration-300 shadow-lg hover:shadow-xl font-semibold"
+                 >
                    Explore Collection
                  </Button>
                </Link>

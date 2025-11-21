@@ -269,14 +269,17 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* Massive Footer Logo */}
+      {/* Footer Logo */}
       <div className="border-t border-white/5 pt-4">
-        <h1 className="text-[12vw] md:text-[14vw] leading-none font-serif text-center text-sand/5 select-none pointer-events-none">
+        <h1 className="text-[8vw] md:text-[10vw] leading-none font-serif text-center text-sand/5 select-none pointer-events-none">
           SCENTORIA
         </h1>
-        <div className="flex justify-between px-6 pb-6 text-[10px] text-sand/30 uppercase tracking-wider">
+        <div className="flex justify-between px-6 pb-6 text-[10px] text-sand/40 uppercase tracking-wider">
           <span>&copy; 2024 Scentoria</span>
-          <span>Made in Morocco</span>
+          <span className="flex items-center gap-2">
+            <span className="inline-block w-1.5 h-1.5 bg-gold rounded-full"></span>
+            Handcrafted in Morocco
+          </span>
         </div>
       </div>
     </footer>
@@ -306,7 +309,7 @@ export const CartDrawer: React.FC = () => {
       />
       
       <div
-        className={`fixed inset-y-0 right-0 w-full max-w-lg bg-gradient-to-br from-sand via-sand to-sand/95 z-[70] shadow-[0_0_50px_rgba(0,0,0,0.3)] transform transition-transform duration-500 cubic-bezier(0.22, 1, 0.36, 1) flex flex-col ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed inset-y-0 right-0 w-[90%] max-w-lg bg-gradient-to-br from-sand via-sand to-sand/95 z-[70] shadow-[0_0_50px_rgba(0,0,0,0.3)] transform transition-transform duration-500 cubic-bezier(0.22, 1, 0.36, 1) flex flex-col ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}
         role="dialog"
         aria-modal="true"
         aria-label="Shopping cart"
@@ -327,12 +330,28 @@ export const CartDrawer: React.FC = () => {
 
         <div className="flex-1 overflow-y-auto p-8 space-y-8">
           {items.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center space-y-6">
-              <ShoppingBag size={48} className="text-clay/50" />
-              <p className="text-cedar/60 font-serif text-lg">Your cart is empty.</p>
-              <Link to="/shop" onClick={() => toggleDrawer(false)}>
-                <Button variant="outline">Browse Collection</Button>
+            <div className="h-full flex flex-col items-center justify-center text-center space-y-6 px-4">
+              <div className="relative">
+                <ShoppingBag size={64} className="text-clay/40" />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gold rounded-full animate-pulse"></div>
+              </div>
+              <div>
+                <p className="text-midnight font-serif text-2xl mb-2 italic">Your next ritual awaits</p>
+                <p className="text-cedar text-sm max-w-xs mx-auto leading-relaxed">
+                  Discover hand-poured candles crafted to transform your space into sanctuary
+                </p>
+              </div>
+              <Link to="/shop" onClick={() => toggleDrawer(false)} className="w-full max-w-xs">
+                <Button variant="primary" className="w-full">Explore Collection</Button>
               </Link>
+              <div className="pt-4 border-t border-cedar/10 w-full max-w-xs">
+                <p className="text-xs text-cedar/80 mb-3 font-medium">Popular Choices:</p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  <span className="text-xs px-3 py-1 bg-sand rounded-full text-cedar hover:bg-clay/20 transition-colors cursor-pointer">Atlas Cedar</span>
+                  <span className="text-xs px-3 py-1 bg-sand rounded-full text-cedar hover:bg-clay/20 transition-colors cursor-pointer">Sahara Dune</span>
+                  <span className="text-xs px-3 py-1 bg-sand rounded-full text-cedar hover:bg-clay/20 transition-colors cursor-pointer">Riad Courtyard</span>
+                </div>
+              </div>
             </div>
           ) : (
             items.map((item) => (
@@ -351,23 +370,22 @@ export const CartDrawer: React.FC = () => {
                       <h3 className="font-serif text-lg text-midnight leading-tight">{item.name}</h3>
                       <p className="font-bold text-midnight text-lg ml-2">{item.price * item.quantity} <span className="text-sm font-normal text-cedar/70">MAD</span></p>
                     </div>
-                    <p className="text-xs text-cedar/60 uppercase tracking-wider">{item.size}</p>
+                    <p className="text-xs text-cedar uppercase tracking-wider">{item.size}</p>
                   </div>
 
                   <div className="flex justify-between items-end mt-4">
                     <div className="flex items-center border-2 border-cedar/30 rounded-md overflow-hidden shadow-sm bg-white" role="group" aria-label="Quantity controls">
                       <button
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="w-9 h-9 flex items-center justify-center hover:bg-cedar/20 transition-colors font-medium disabled:opacity-30 disabled:cursor-not-allowed"
+                        onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                        className="w-9 h-9 flex items-center justify-center hover:bg-cedar/20 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-gold focus:ring-inset"
                         aria-label="Decrease quantity"
-                        disabled={item.quantity <= 1}
                       >
                         −
                       </button>
                       <span className="w-10 text-center text-sm font-semibold border-x-2 border-cedar/20 h-9 flex items-center justify-center" aria-label={`Quantity: ${item.quantity}`}>{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="w-9 h-9 flex items-center justify-center hover:bg-cedar/20 transition-colors font-medium"
+                        className="w-9 h-9 flex items-center justify-center hover:bg-cedar/20 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-gold focus:ring-inset"
                         aria-label="Increase quantity"
                       >
                         +
@@ -375,7 +393,7 @@ export const CartDrawer: React.FC = () => {
                     </div>
                     <button
                       onClick={() => removeItem(item.id)}
-                      className="text-xs text-cedar/50 hover:text-red-600 font-medium underline decoration-1 underline-offset-2 transition-colors"
+                      className="text-xs text-cedar hover:text-red-600 font-medium underline decoration-1 underline-offset-2 transition-colors focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 rounded"
                       aria-label={`Remove ${item.name} from cart`}
                     >
                       Remove

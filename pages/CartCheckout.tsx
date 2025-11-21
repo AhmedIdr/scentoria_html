@@ -180,6 +180,21 @@ const CartCheckout: React.FC = () => {
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto min-h-screen">
       <SectionTitle title="Checkout" subtitle="Finalize Your Order" center={false} />
 
+      {/* WhatsApp Process Explanation */}
+      <div className="bg-gold/10 border-l-4 border-gold p-6 mb-8 rounded-r-lg">
+        <div className="flex items-start gap-4">
+          <MessageCircle size={24} className="text-gold shrink-0 mt-1" />
+          <div>
+            <h4 className="font-semibold text-midnight mb-2 flex items-center gap-2">
+              Personalized Order Processing via WhatsApp
+            </h4>
+            <p className="text-cedar text-sm leading-relaxed">
+              Complete the form below, and we'll open WhatsApp with your order details pre-filled. This allows us to confirm your selection, coordinate delivery timing, and answer any questions for smooth service across Morocco.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         {/* Cart Items */}
         <div className="lg:col-span-3 space-y-6">

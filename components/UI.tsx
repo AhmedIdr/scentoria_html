@@ -7,20 +7,20 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
-export const Button: React.FC<ButtonProps> = ({ 
-  variant = 'primary', 
-  size = 'md', 
-  className = '', 
-  children, 
-  ...props 
+export const Button: React.FC<ButtonProps> = ({
+  variant = 'primary',
+  size = 'md',
+  className = '',
+  children,
+  ...props
 }) => {
-  const baseStyles = "relative overflow-hidden inline-flex items-center justify-center font-medium transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed group";
-  
+  const baseStyles = "relative inline-flex items-center justify-center font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 active:scale-95";
+
   const variants = {
-    primary: "bg-cedar text-white border border-cedar",
-    secondary: "bg-clay text-midnight hover:bg-sand",
-    outline: "border border-cedar text-cedar hover:text-white",
-    ghost: "text-cedar hover:text-gold"
+    primary: "bg-cedar text-white border border-cedar hover:bg-midnight hover:border-midnight shadow-md hover:shadow-xl hover:-translate-y-0.5",
+    secondary: "bg-clay text-midnight hover:bg-sand shadow-md hover:shadow-lg hover:-translate-y-0.5",
+    outline: "border-2 border-cedar text-cedar hover:bg-cedar hover:text-white shadow-sm hover:shadow-md hover:-translate-y-0.5",
+    ghost: "text-cedar hover:text-gold hover:bg-gold/5 hover:scale-105"
   };
 
   const sizes = {

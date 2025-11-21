@@ -80,7 +80,7 @@ const Home: React.FC = () => {
         {/* Hero Content */}
         <div className="relative z-20 max-w-6xl w-full">
           <FadeIn delay={200}>
-            <h1 className="text-sand font-serif text-5xl md:text-7xl lg:text-9xl leading-[0.9] tracking-tight mb-8 drop-shadow-2xl">
+            <h1 className="text-sand font-serif text-4xl sm:text-5xl md:text-7xl lg:text-9xl leading-[0.9] tracking-tight mb-8 drop-shadow-2xl">
               <span className="block italic font-light opacity-90">The art of</span>
               <span className="block font-medium ml-4 md:ml-20">memory & scent</span>
             </h1>

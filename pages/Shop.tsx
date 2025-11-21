@@ -153,34 +153,42 @@ const Shop: React.FC = () => {
         {filteredAndSortedProducts.map((product, idx) => (
           <FadeIn key={product.id} delay={(idx % 3) * 100}>
             <div className="group">
-              <div className="relative overflow-hidden bg-white aspect-[4/5] mb-4">
+              <div className="relative overflow-hidden bg-white aspect-[4/5] mb-4 shadow-sm hover:shadow-lg transition-shadow duration-300">
+                 {/* Badge */}
+                 {idx < 3 && (
+                   <div className="absolute top-4 left-4 z-20">
+                     <span className="bg-gold text-midnight text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 shadow-md">
+                       Bestseller
+                     </span>
+                   </div>
+                 )}
                  <Link to={`/product/${product.slug}`}>
                    <div className="w-full h-full transform transition-transform duration-700 group-hover:scale-105">
-                    <GeneratedImage 
-                        prompt={product.imagePrompt} 
-                        alt={product.name} 
+                    <GeneratedImage
+                        prompt={product.imagePrompt}
+                        alt={product.name}
                         aspectRatio="3:4"
                         className="w-full h-full"
                     />
                    </div>
                  </Link>
                  {/* Quick Add Button appearing on hover */}
-                 <button 
+                 <button
                   onClick={() => addItem(product)}
-                  className="absolute bottom-0 left-0 right-0 bg-midnight text-white py-4 text-sm uppercase tracking-widest font-medium translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-center items-center hover:bg-cedar z-10"
+                  className="absolute bottom-0 left-0 right-0 bg-midnight text-white py-4 text-sm uppercase tracking-widest font-semibold translate-y-full group-hover:translate-y-0 transition-all duration-300 flex justify-center items-center hover:bg-gold hover:text-midnight z-10 shadow-lg active:scale-95"
                  >
                    Add to Cart — {product.price} MAD
                  </button>
               </div>
               <div>
-                <div className="flex justify-between items-start mb-1">
-                  <Link to={`/product/${product.slug}`}>
-                    <h3 className="font-serif text-xl text-midnight hover:text-gold transition-colors">{product.name}</h3>
+                <div className="flex justify-between items-start mb-2 gap-3">
+                  <Link to={`/product/${product.slug}`} className="flex-1">
+                    <h3 className="font-serif text-xl text-midnight hover:text-gold transition-colors leading-tight">{product.name}</h3>
                   </Link>
-                  <span className="text-sm font-medium text-midnight">{product.price} MAD</span>
+                  <span className="text-base font-bold text-midnight whitespace-nowrap">{product.price} <span className="text-xs font-normal text-cedar">MAD</span></span>
                 </div>
-                <p className="text-cedar/60 text-xs uppercase tracking-wide mb-2">{product.size} • {product.scentFamily}</p>
-                <p className="text-sm text-cedar/70 line-clamp-2">{product.tagline}</p>
+                <p className="text-cedar text-xs uppercase tracking-wide mb-2 font-medium">{product.size} • {product.scentFamily}</p>
+                <p className="text-sm text-cedar/80 line-clamp-2 leading-relaxed">{product.tagline}</p>
               </div>
             </div>
           </FadeIn>

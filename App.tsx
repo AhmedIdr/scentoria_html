@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar, Footer, CartDrawer } from './components/Layout';
+import { ToastContainer } from './components/Toast';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductDetail from './pages/ProductDetail';
@@ -35,6 +36,7 @@ const App: React.FC = () => {
         <ScrollToTop />
         <Navbar />
         <CartDrawer />
+        <ToastContainer />
 
         <main id="main-content" className="flex-grow">
           <Routes>

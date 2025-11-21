@@ -4,6 +4,7 @@ import { PRODUCTS } from '../constants';
 import { Button, FadeIn } from '../components/UI';
 import { GeneratedImage } from '../components/GeneratedImage';
 import { useCartStore } from '../store';
+import { SEO } from '../components/SEO';
 import { ArrowLeft, Clock, Star } from 'lucide-react';
 
 const ProductDetail: React.FC = () => {
@@ -25,6 +26,12 @@ const ProductDetail: React.FC = () => {
 
   return (
     <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto min-h-screen">
+      <SEO
+        title={`${product.name} - ${product.tagline} | Scentoria`}
+        description={product.description}
+        type="product"
+      />
+
       <button onClick={() => navigate(-1)} className="flex items-center text-cedar/60 hover:text-midnight mb-8 text-sm">
         <ArrowLeft size={16} className="mr-2" /> Back
       </button>

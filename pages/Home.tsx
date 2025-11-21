@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { PRODUCTS, STATIC_PROMPTS } from '../constants';
 import { Button, FadeIn, Marquee } from '../components/UI';
 import { GeneratedImage } from '../components/GeneratedImage';
+import { SEO } from '../components/SEO';
 
 const Home: React.FC = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -15,7 +16,12 @@ const Home: React.FC = () => {
 
   return (
     <div className="w-full overflow-hidden">
-      
+      <SEO
+        title="Scentoria | Luxury Moroccan Candles & Home Fragrances"
+        description="Hand-poured luxury candles inspired by Morocco's diverse landscapes. 100% vegetable wax, artisanal fragrances for your home and spa."
+        type="website"
+      />
+
       {/* --- Hero Section --- */}
       <section className="relative h-screen w-full flex items-end pb-20 md:pb-32 px-6 md:px-12 overflow-hidden bg-midnight">
         {/* Parallax Background */}

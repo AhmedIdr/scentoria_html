@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { CartItem, Product } from './types';
+import { useToastStore } from './components/Toast';
 
 interface CartState {
   items: CartItem[];
@@ -19,24 +20,36 @@ export const useCartStore = create<CartState>()(
       items: [],
       isDrawerOpen: false,
 
-      addItem: (product) => set((state) => {
-        const existingItem = state.items.find((item) => item.id === product.id);
+      addItem: (product) => {
+        const existingItem = get().items.find((item) => item.id === product.id);
         if (existingItem) {
-          return {
+          set((state) => ({
             items: state.items.map((item) =>
               item.id === product.id
                 ? { ...item, quantity: item.quantity + 1 }
                 : item
             ),
             isDrawerOpen: true,
-          };
+          }));
+          useToastStore.getState().addToast(`Added another ${product.name} to cart`, 'success');
+        } else {
+          set((state) => ({
+            items: [...state.items, { ...product, quantity: 1 }],
+            isDrawerOpen: true
+          }));
+          useToastStore.getState().addToast(`${product.name} added to cart`, 'success');
         }
-        return { items: [...state.items, { ...product, quantity: 1 }], isDrawerOpen: true };
-      }),
+      },
 
-      removeItem: (id) => set((state) => ({
-        items: state.items.filter((item) => item.id !== id)
-      })),
+      removeItem: (id) => {
+        const item = get().items.find((i) => i.id === id);
+        set((state) => ({
+          items: state.items.filter((item) => item.id !== id)
+        }));
+        if (item) {
+          useToastStore.getState().addToast(`${item.name} removed from cart`, 'info');
+        }
+      },
 
       updateQuantity: (id, quantity) => set((state) => ({
         items: state.items.map((item) =>

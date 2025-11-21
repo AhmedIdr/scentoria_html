@@ -62,16 +62,24 @@ export const Navbar: React.FC = () => {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex space-x-10">
-          {NAV_LINKS.map((link) => (
-            <Link 
-              key={link.name} 
-              to={link.path} 
-              className="text-xs uppercase tracking-[0.15em] font-medium hover:opacity-50 transition-opacity relative group"
-            >
-              {link.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-px bg-current transition-all duration-300 group-hover:w-full"></span>
-            </Link>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const isActive = location.pathname === link.path;
+            return (
+              <Link
+                key={link.name}
+                to={link.path}
+                className={`text-xs uppercase tracking-[0.15em] font-medium transition-opacity relative group ${
+                  isActive ? 'opacity-100' : 'opacity-70 hover:opacity-100'
+                }`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {link.name}
+                <span className={`absolute -bottom-1 left-0 h-px bg-current transition-all duration-300 ${
+                  isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                }`}></span>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Logo */}
@@ -110,16 +118,22 @@ export const Navbar: React.FC = () => {
         >
           <X size={32} />
         </button>
-        {NAV_LINKS.map((link) => (
-          <Link 
-            key={link.name} 
-            to={link.path} 
-            className="text-4xl font-serif italic hover:text-gold transition-colors"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            {link.name}
-          </Link>
-        ))}
+        {NAV_LINKS.map((link) => {
+          const isActive = location.pathname === link.path;
+          return (
+            <Link
+              key={link.name}
+              to={link.path}
+              className={`text-4xl font-serif italic transition-colors ${
+                isActive ? 'text-gold' : 'text-sand hover:text-gold'
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              {link.name}
+            </Link>
+          );
+        })}
       </div>
     </nav>
     </>

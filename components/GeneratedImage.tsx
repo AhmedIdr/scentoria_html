@@ -30,19 +30,41 @@ const getImageDimensions = (aspectRatio: string): { width: number; height: numbe
   }
 };
 
-// Determine category from prompt
-const getCategoryFromPrompt = (prompt: string): string => {
+// Extract search keywords from prompt for Unsplash
+const getSearchTermsFromPrompt = (prompt: string): string => {
   const lowerPrompt = prompt.toLowerCase();
 
-  if (lowerPrompt.includes('candle') || lowerPrompt.includes('glass jar')) return 'candle';
-  if (lowerPrompt.includes('spa') || lowerPrompt.includes('hammam')) return 'spa';
-  if (lowerPrompt.includes('riad') || lowerPrompt.includes('courtyard')) return 'architecture';
-  if (lowerPrompt.includes('mountain') || lowerPrompt.includes('dune') || lowerPrompt.includes('sahara')) return 'nature';
-  if (lowerPrompt.includes('workshop') || lowerPrompt.includes('artisan')) return 'craft';
-  if (lowerPrompt.includes('reading') || lowerPrompt.includes('living room')) return 'lifestyle';
-  if (lowerPrompt.includes('texture') || lowerPrompt.includes('abstract')) return 'texture';
+  // Map prompt content to relevant search terms
+  if (lowerPrompt.includes('candle') || lowerPrompt.includes('glass jar')) {
+    return 'luxury,candle,home,fragrance,minimal';
+  }
+  if (lowerPrompt.includes('spa') || lowerPrompt.includes('hammam') || lowerPrompt.includes('bath')) {
+    return 'spa,wellness,candle,aromatherapy,luxury';
+  }
+  if (lowerPrompt.includes('riad') || lowerPrompt.includes('courtyard') || lowerPrompt.includes('moroccan')) {
+    return 'moroccan,interior,design,candle,home';
+  }
+  if (lowerPrompt.includes('mountain') || lowerPrompt.includes('atlas')) {
+    return 'mountain,nature,minimal,landscape,serene';
+  }
+  if (lowerPrompt.includes('dune') || lowerPrompt.includes('sahara') || lowerPrompt.includes('desert')) {
+    return 'desert,sand,dune,minimal,nature';
+  }
+  if (lowerPrompt.includes('workshop') || lowerPrompt.includes('artisan') || lowerPrompt.includes('craftsman')) {
+    return 'artisan,craft,handmade,workshop,candle';
+  }
+  if (lowerPrompt.includes('reading') || lowerPrompt.includes('living room') || lowerPrompt.includes('cozy')) {
+    return 'cozy,home,candle,lifestyle,interior';
+  }
+  if (lowerPrompt.includes('evening') || lowerPrompt.includes('night') || lowerPrompt.includes('wind-down')) {
+    return 'evening,candle,calm,atmosphere,cozy';
+  }
+  if (lowerPrompt.includes('texture') || lowerPrompt.includes('abstract') || lowerPrompt.includes('macro')) {
+    return 'texture,minimal,abstract,natural,organic';
+  }
 
-  return 'nature';
+  // Default to candle-related imagery
+  return 'candle,home,fragrance,minimal,luxury';
 };
 
 export const GeneratedImage: React.FC<GeneratedImageProps> = ({
@@ -56,10 +78,11 @@ export const GeneratedImage: React.FC<GeneratedImageProps> = ({
 
   const dimensions = getImageDimensions(aspectRatio);
   const seed = hashCode(prompt);
+  const searchTerms = getSearchTermsFromPrompt(prompt);
 
-  // Using Picsum Photos API with deterministic seed for consistent images
-  // Adding blur and grayscale for elegant, minimalist aesthetic
-  const src = `https://picsum.photos/seed/${seed}/${dimensions.width}/${dimensions.height}?grayscale&blur=1`;
+  // Using Unsplash Source API with relevant search terms for candle/spa imagery
+  // The seed ensures consistent images across page loads
+  const src = `https://source.unsplash.com/${dimensions.width}x${dimensions.height}/?${searchTerms}&sig=${seed}`;
 
   return (
     <div className={`relative overflow-hidden ${className}`}>
